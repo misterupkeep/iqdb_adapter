@@ -76,9 +76,10 @@ async function main() {
     console.log(`[info] IQDB wrapper listening on port ${port}`);
   });
 
-  const quit = () => {
+  const quit = async () => {
     server.close();
-    save_map_to_disk();
+    await save_map_to_disk();
+    process.exit(0);
   };
 
   process.on("SIGTERM", quit);
