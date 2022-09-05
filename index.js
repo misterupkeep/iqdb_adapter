@@ -34,7 +34,7 @@ app.post("/query", upload.single("file"), async (req, res) => {
     const formdata = new FormData();
     formdata.append("file", req.file.buffer);
     let upstream_res = (
-      await axios.post(`/query`, formdata, {
+      await axios.post(`${process.env.IQDB_HOST || ""}/query`, formdata, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
