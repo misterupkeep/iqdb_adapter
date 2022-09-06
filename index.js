@@ -17,7 +17,7 @@ const axios = Axios.create({
 import {
   id_to_path,
   read_map_from_disk,
-  save_map_to_disk,
+  save_map_to_disk_immediate,
 } from "./lib/id_to_path.js";
 
 const app = express();
@@ -85,7 +85,7 @@ async function main() {
 
   const quit = async () => {
     server.close();
-    await save_map_to_disk();
+    await save_map_to_disk_immediate();
     process.exit(0);
   };
 
