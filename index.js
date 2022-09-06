@@ -24,15 +24,22 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+import fs from "node:fs/promises";
 import { get_photo_from_path } from "./lib/db.js";
 
+const url_regex = /.*((original|big)\/.*)/;
 const kSCORE_THRESHOLD = process.env.SCORE_THRESHOLD || 60;
-app.post("/query", upload.single("file"), async (req, res) => {
-  if (!("file" in req)) return res.status(400).send();
+app.post("/query", async (req, res) => {
+  if (!("file" in req.body) || typeof req.body.file !== "string")
+    return res.status(400).send();
 
   try {
+    const filepath =
+      process.env.UPLOADS_ORIGINAL_PATH + url_regex.exec(req.body.file)[0];
+    const file = await fs.readFile(filepath);
+
     const formdata = new FormData();
-    formdata.append("file", req.file.buffer);
+    formdata.append("file", file);
     let upstream_res = (
       await axios.post(`/query`, formdata, {
         headers: {
