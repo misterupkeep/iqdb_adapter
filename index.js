@@ -28,7 +28,8 @@ import fs from "node:fs/promises";
 import { get_photo_from_path } from "./lib/db.js";
 
 const url_regex = /uploads\/(.*)/;
-const kSCORE_THRESHOLD = process.env.SCORE_THRESHOLD || 60;
+const kSCORE_THRESHOLD = process.env.SCORE_THRESHOLD || 15;
+const kSCORE_THRESHOLD_MAX = process.env.SCORE_THRESHOLD_MAX || 70;
 app.post("/query", async (req, res) => {
   if (!("file" in req.body) || typeof req.body.file !== "string")
     return res.status(400).send();
@@ -63,7 +64,9 @@ app.post("/query", async (req, res) => {
       })
     );
     posts = posts
-      .filter((p) => p.score > kSCORE_THRESHOLD && p.score < 98)
+      .filter(
+        (p) => p.score > kSCORE_THRESHOLD && p.score < kSCORE_THRESHOLD_MAX
+      )
       .sort((a, b) => b.score - a.score);
 
     if (posts.length % 3 == 1) posts.pop();
